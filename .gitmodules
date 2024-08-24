@@ -1,0 +1,5 @@
+[submodule "third_party/libpg_query"]
+	path = third_party/libpg_query
+	url = https://github.com/deiio/libpg_query.git
+	branch = 16-latest
+	update = rebase
