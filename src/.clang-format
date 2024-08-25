@@ -1,7 +1,10 @@
 # ZoomDB is a SQL database management system.
 BasedOnStyle: Google
 DerivePointerAlignment: False
-ReflowComments: False
 AlignTrailingComments:
   Kind: Always
   OverEmptyLines: 1
+AlignConsecutiveAssignments:
+  Enabled: True
+  AcrossEmptyLines: True
+  AcrossComments: True

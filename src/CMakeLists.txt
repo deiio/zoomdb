@@ -4,6 +4,7 @@
 # https://github.com/deiio/zoomdb
 #
 
+ADD_SUBDIRECTORY(common)
 ADD_SUBDIRECTORY(main)
 ADD_SUBDIRECTORY(parser)
 
