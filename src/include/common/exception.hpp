@@ -11,6 +11,8 @@
 #include <stdexcept>
 #include <string>
 
+#include "common/internal-types.hpp"
+
 namespace zoomdb {
 
 /**
@@ -49,6 +51,8 @@ enum class ExceptionType {
 
 class Exception : public std::runtime_error {
  public:
+  Exception() = delete;
+
   explicit Exception(std::string message);
   Exception(ExceptionType type, const std::string& message);
 
@@ -65,6 +69,163 @@ class Exception : public std::runtime_error {
  private:
   ExceptionType type_;
   std::string exception_message_;
+};
+
+/**
+ * Exception derived classes.
+ */
+
+class ValueOutOfRangeException : public Exception {
+ public:
+  ValueOutOfRangeException(int64_t value, const TypeId& orig_type,
+                           const TypeId& new_type);
+  ValueOutOfRangeException(double value, const TypeId& orig_type,
+                           const TypeId& new_type);
+  ValueOutOfRangeException(const TypeId& var_type, size_t length);
+};
+
+class CastException : public Exception {
+ public:
+  CastException(const TypeId& orig_type, const TypeId& new_type);
+};
+
+class ConversionException : public Exception {
+ public:
+  ConversionException(std::string msg, ...);
+};
+
+class UnknownTypeException : public Exception {
+ public:
+  UnknownTypeException(int type, std::string msg, ...);
+};
+
+class DecimalException : public Exception {
+ public:
+  DecimalException(std::string msg, ...);
+};
+
+class TypeMismatchException : public Exception {
+ public:
+  TypeMismatchException(const std::string& msg, const TypeId& t1,
+                        const TypeId& t2);
+};
+
+class NumericValueOutOfRangeException : public Exception {
+ public:
+  NumericValueOutOfRangeException(const std::string& msg, int type);
+
+  static const int kUnderflow = 1;
+  static const int kOverflow  = 2;
+};
+
+class DivideByZeroException : public Exception {
+ public:
+  DivideByZeroException(std::string msg, ...);
+};
+
+class ObjectSizeException : public Exception {
+ public:
+  ObjectSizeException(const std::string& msg);
+};
+
+class IncompatibleTypeException : public Exception {
+ public:
+  IncompatibleTypeException(int type, const std::string& msg);
+};
+
+class SerializationException : public Exception {
+ public:
+  SerializationException(const std::string& msg);
+};
+
+class TransactionException : public Exception {
+ public:
+  TransactionException(const std::string& msg);
+};
+
+class NotImplementationException : public Exception {
+ public:
+  NotImplementationException(std::string msg, ...);
+};
+
+class ExpressionException : public Exception {
+ public:
+  ExpressionException(std::string msg, ...);
+};
+
+class CatalogException : public Exception {
+ public:
+  CatalogException(std::string msg, ...);
+};
+
+class ParserException : public Exception {
+ public:
+  ParserException(std::string msg, ...);
+};
+
+class PlannerException : public Exception {
+ public:
+  PlannerException(std::string msg, ...);
+};
+
+class SchedulerException : public Exception {
+ public:
+  SchedulerException(std::string msg, ...);
+};
+
+class ExecutorException : public Exception {
+ public:
+  ExecutorException(std::string msg, ...);
+};
+
+class SyntaxException : public Exception {
+ public:
+  SyntaxException(std::string msg, ...);
+};
+
+class ConstraintException : public Exception {
+ public:
+  ConstraintException(std::string msg, ...);
+};
+
+class IndexException : public Exception {
+ public:
+  IndexException(std::string msg, ...);
+};
+
+class StatException : public Exception {
+ public:
+  StatException(std::string msg, ...);
+};
+
+class ConnectionException : public Exception {
+ public:
+  ConnectionException(std::string msg, ...);
+};
+
+class NetworkProcessException : public Exception {
+ public:
+  NetworkProcessException(std::string msg, ...);
+};
+
+class SettingsException : public Exception {
+ public:
+  SettingsException(std::string msg, ...);
+};
+
+class BinderException : public Exception {
+ public:
+  BinderException(std::string msg, ...);
+};
+
+class OptimizerException : public Exception {
+ public:
+  OptimizerException(std::string msg, ...);
+};
+
+class NullPointerException : public Exception {
+ public:
+  NullPointerException(std::string msg, ...);
 };
 
 }  // namespace zoomdb

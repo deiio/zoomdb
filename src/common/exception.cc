@@ -17,6 +17,12 @@
 
 namespace zoomdb {
 
+#define FormatConstruct(msg) \
+  va_list ap;                \
+  va_start(ap, msg);         \
+  Format(ap);                \
+  va_end(ap);
+
 Exception::Exception(std::string message)
     : std::runtime_error(message),
       type_(ExceptionType::kInvalid),
@@ -159,6 +165,284 @@ void Exception::PrintStackTrace(FILE* out, int32_t max_frames) {
 
 void Exception::Format(va_list ap) {
   exception_message_ = StringUtil::VFormat(exception_message_, ap);
+}
+
+/**
+ * class ValueOutOfRangeException
+ */
+
+ValueOutOfRangeException::ValueOutOfRangeException(int64_t value,
+                                                   const TypeId& orig_type,
+                                                   const TypeId& new_type)
+    : Exception(
+          ExceptionType::kConversion,
+          "Type " + TypeIdToString(orig_type) + " with value " +
+              std::to_string(value) + " can't be cast as " +
+              TypeIdToString(new_type) +
+              " because the value is out of range for the destination type") {}
+
+ValueOutOfRangeException::ValueOutOfRangeException(double value,
+                                                   const TypeId& orig_type,
+                                                   const TypeId& new_type)
+    : Exception(
+          ExceptionType::kConversion,
+          "Type " + TypeIdToString(orig_type) + " with value " +
+              std::to_string(value) + " can't be cast as " +
+              TypeIdToString(new_type) +
+              " because the value is out of range for the destination type") {}
+
+ValueOutOfRangeException::ValueOutOfRangeException(const TypeId& var_type,
+                                                   size_t length)
+    : Exception(ExceptionType::kOutOfRange,
+                "The value is too long to fit into type " +
+                    TypeIdToString(var_type) + "(" + std::to_string(length) +
+                    ")") {}
+
+/**
+ * Class CastException
+ */
+
+CastException::CastException(const TypeId& orig_type, const TypeId& new_type)
+    : Exception(ExceptionType::kConversion,
+                "Type " + TypeIdToString(orig_type) + " can't be cast as " +
+                    TypeIdToString(new_type)) {}
+
+/**
+ * Class ConversionException
+ */
+
+ConversionException::ConversionException(std::string msg, ...)
+    : Exception(ExceptionType::kConversion, msg) {
+  FormatConstruct(msg);
+}
+
+/**
+ * Class UnknownTypeException
+ */
+
+UnknownTypeException::UnknownTypeException(int type, std::string msg, ...)
+    : Exception(ExceptionType::kUnknownType,
+                "Unknown type " + std::to_string(type) + msg) {
+  FormatConstruct(msg);
+}
+
+/**
+ * Class DecimalException
+ */
+
+DecimalException::DecimalException(std::string msg, ...)
+    : Exception(ExceptionType::kDecimal, msg) {
+  FormatConstruct(msg);
+}
+
+/**
+ * Class TypeMismatchException
+ */
+
+TypeMismatchException::TypeMismatchException(const std::string& msg,
+                                             const TypeId& t1, const TypeId& t2)
+    : Exception(ExceptionType::kMismatchType,
+                "Type " + TypeIdToString(t1) + " does not match with " +
+                    TypeIdToString(t2) + " " + msg) {}
+
+/**
+ * Class NumericValueOutOfRangeException
+ */
+
+NumericValueOutOfRangeException::NumericValueOutOfRangeException(
+    const std::string& msg, int type)
+    : Exception(ExceptionType::kOutOfRange, msg + " " + std::to_string(type)) {}
+
+/**
+ * Class DivideByZeroException
+ */
+
+DivideByZeroException::DivideByZeroException(std::string msg, ...)
+    : Exception(ExceptionType::kDivideByZero, msg) {
+  FormatConstruct(msg);
+}
+
+/**
+ * Class ObjectSizeException
+ */
+
+ObjectSizeException::ObjectSizeException(const std::string& msg)
+    : Exception(ExceptionType::kObjectSize, msg) {}
+
+/**
+ * Class IncompatibleTypeException
+ */
+
+IncompatibleTypeException::IncompatibleTypeException(int type,
+                                                     const std::string& msg)
+    : Exception(ExceptionType::kIncompatibleType,
+                "Incompatible type " +
+                    TypeIdToString(static_cast<TypeId>(type)) + " " + msg) {}
+
+/**
+ * Class SerializationException
+ */
+
+SerializationException::SerializationException(const std::string& msg)
+    : Exception(ExceptionType::kSerialization, msg) {}
+
+/**
+ * Class TransactionException
+ */
+
+TransactionException::TransactionException(const std::string& msg)
+    : Exception(ExceptionType::kTransaction, msg) {}
+
+/**
+ * Class NotImplementationException
+ */
+
+NotImplementationException::NotImplementationException(std::string msg, ...)
+    : Exception(ExceptionType::kNotImplemented, msg) {
+  FormatConstruct(msg);
+}
+
+/**
+ * Class ExpressionException
+ */
+
+ExpressionException::ExpressionException(std::string msg, ...)
+    : Exception(ExceptionType::kExpression, msg) {
+  FormatConstruct(msg);
+}
+
+/**
+ * Class CatalogException
+ */
+
+CatalogException::CatalogException(std::string msg, ...)
+    : Exception(ExceptionType::kCatalog, msg) {
+  FormatConstruct(msg);
+}
+
+/**
+ * Class ParserException
+ */
+
+ParserException::ParserException(std::string msg, ...)
+    : Exception(ExceptionType::kParser, msg) {
+  FormatConstruct(msg);
+}
+
+/**
+ * Class PlannerException
+ */
+
+PlannerException::PlannerException(std::string msg, ...)
+    : Exception(ExceptionType::kPlanner, msg) {
+  FormatConstruct(msg);
+}
+
+/**
+ * Class SchedulerException
+ */
+
+SchedulerException::SchedulerException(std::string msg, ...)
+    : Exception(ExceptionType::kScheduler, msg) {
+  FormatConstruct(msg);
+}
+
+/**
+ * Class ExecutorException
+ */
+
+ExecutorException::ExecutorException(std::string msg, ...)
+    : Exception(ExceptionType::kExecutor, msg) {
+  FormatConstruct(msg);
+}
+
+/**
+ * Class SyntaxException
+ */
+
+SyntaxException::SyntaxException(std::string msg, ...)
+    : Exception(ExceptionType::kSyntax, msg) {
+  FormatConstruct(msg);
+}
+
+/**
+ * Class ConstraintException
+ */
+
+ConstraintException::ConstraintException(std::string msg, ...)
+    : Exception(ExceptionType::kConstraint, msg) {
+  FormatConstruct(msg);
+}
+
+/**
+ * Class IndexException
+ */
+
+IndexException::IndexException(std::string msg, ...)
+    : Exception(ExceptionType::kIndex, msg) {
+  FormatConstruct(msg);
+}
+
+/**
+ * Class StatException
+ */
+
+StatException::StatException(std::string msg, ...)
+    : Exception(ExceptionType::kStat, msg) {
+  FormatConstruct(msg);
+}
+
+/**
+ * Class ConnectionException
+ */
+
+ConnectionException::ConnectionException(std::string msg, ...)
+    : Exception(ExceptionType::kConnection, msg) {
+  FormatConstruct(msg);
+}
+
+/**
+ * Class NetworkProcessException
+ */
+
+NetworkProcessException::NetworkProcessException(std::string msg, ...)
+    : Exception(ExceptionType::kNetwork, msg) {
+  FormatConstruct(msg);
+}
+
+/**
+ * Class SettingsException
+ */
+
+SettingsException::SettingsException(std::string msg, ...)
+    : Exception(ExceptionType::kSettings, msg) {
+  FormatConstruct(msg);
+}
+
+/**
+ * Class BinderException
+ */
+BinderException::BinderException(std::string msg, ...)
+    : Exception(ExceptionType::kBinder, msg) {
+  FormatConstruct(msg);
+}
+
+/**
+ * Class OptimizerException
+ */
+
+OptimizerException::OptimizerException(std::string msg, ...)
+    : Exception(ExceptionType::kOptimizer, msg) {
+  FormatConstruct(msg);
+}
+
+/**
+ * Class NullPointerException
+ */
+
+NullPointerException::NullPointerException(std::string msg, ...)
+    : Exception(ExceptionType::kNullPointer, msg) {
+  FormatConstruct(msg);
 }
 
 }  // namespace zoomdb
